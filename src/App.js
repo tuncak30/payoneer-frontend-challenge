@@ -18,8 +18,11 @@ import {
     Skeleton
 } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {ChevronRight} from "@mui/icons-material";
 
 function App() {
     const API_KEY = '404dcc2f1c8087d835711166d14ca85b';
@@ -32,6 +35,7 @@ function App() {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [chartData, setChartData] = useState([]);
     const [sliderIndex, setSliderIndex] = useState(0);
+    const [pageSize, setPageSize] = useState(/Mobi/i.test(window.navigator.userAgent) ? 1 : 3);
     const resultsGroupedByDay = [];
 
     function groupResultsByDay(results){
@@ -106,17 +110,23 @@ function App() {
 
     return (
       <>
-          <div id="increment" onClick={() => {
-              setChartData([]);
-              setSliderIndex(prevState => prevState + 1);
-          }}>+</div>
-
-          <div id="decrement" onClick={() => {
-              setChartData([]);
-              setSliderIndex(prevState => prevState -1)
-          }}>+</div>
           {
               loading ? <Spinner /> : <></>
+          }
+          {
+              sliderIndex === 0 ? <></> :
+                  <div id="decrement" className="slider-buttons" onClick={() => {
+                      setChartData([]);
+                      setSliderIndex(prevState => prevState -1)
+                  }}><ChevronLeftIcon fontSize="large"/></div>
+          }
+
+          {
+              (sliderIndex + 1) * pageSize >= results.length ? <></> :
+                  <div id="increment" className="slider-buttons"  onClick={() => {
+                      setChartData([]);
+                      setSliderIndex(prevState => prevState + 1);
+                  }}><ChevronRightIcon  fontSize="large"/></div>
           }
           <CssBaseline />
           <Snackbar
@@ -172,7 +182,8 @@ function App() {
                   alignItems="center"
                   justify="center"
                   spacing={4}>
-                  {results.slice(3 * sliderIndex,(3 * sliderIndex) + 3).map((card) =>
+
+                  {results.slice(pageSize * sliderIndex,(pageSize * sliderIndex) + pageSize).map((card) =>
                       <WeatherCards
                           card={card}
                           loading={loading}
@@ -191,6 +202,7 @@ function App() {
                               }, 100)
                           }}
                       />)}
+
               </Grid>
               {
                   chartData.length === 0 ? <></> :
