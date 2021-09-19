@@ -2,14 +2,27 @@ import './App.css';
 import {useState, useEffect} from "react";
 import Spinner from "./Components/Spinner";
 import WeatherCards from "./Components/WeatherCards";
-import {Alert, Snackbar, Container, Grid, Typography, CssBaseline, IconButton, FormControl, FormControlLabel, RadioGroup, Radio, Box} from "@mui/material";
+import {
+    Alert,
+    Snackbar,
+    Container,
+    Grid,
+    Typography,
+    CssBaseline,
+    IconButton,
+    FormControl,
+    FormControlLabel,
+    RadioGroup,
+    Radio,
+    Box,
+    Skeleton
+} from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function App() {
     const API_KEY = '404dcc2f1c8087d835711166d14ca85b';
-    const [cityId, setCityId] = useState('323784');
     const [cityName, setCityName] = useState('');
     const [unit, setUnit] = useState('metric');
     const [results, setResults] = useState([]);
@@ -18,11 +31,12 @@ function App() {
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [chartData, setChartData] = useState([]);
+    const [sliderIndex, setSliderIndex] = useState(0);
     const resultsGroupedByDay = [];
 
     function groupResultsByDay(results){
         let secondaryIndex = 0;
-        results.map((result, index) => {
+        results.map((result) => {
             if (resultsGroupedByDay.filter(e => e.date.split(" ")[0] === result.dt_txt.split(" ")[0]).length > 0) {
                 resultsGroupedByDay[secondaryIndex - 1].icons.push(result.weather[0].icon);
                 resultsGroupedByDay[secondaryIndex - 1].temperatures.push(result.main.feels_like);
@@ -43,37 +57,64 @@ function App() {
         setResults(resultsGroupedByDay);
     }
 
-    const refresh = () => {
-        fetch(`https://api.openweathermap.org/data/2.5/forecast?id=${cityId}&appid=${API_KEY}&units=${unit}`)
-            .then(response => response.json())
-            .then(data => {
-                if(parseInt(data.cod) !== 200){
-                    setLoading(false);
-                    setSnackbarMessage(data.message);
+    function getPosition() {
+        return new Promise((res, rej) => {
+            navigator.geolocation.getCurrentPosition(res, rej);
+        });
+    }
+
+    const refresh = async () => {
+        try{
+            //let position = await getPosition();
+            //fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${API_KEY}&units=${unit}`)
+            // You can uncomment upper two lines of code and comment the fetch line below to get user geolocation for more precise results
+                fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Munich,de&appid=${API_KEY}&units=${unit}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(parseInt(data.cod) !== 200){
+                        setLoading(false);
+                        setSnackbarMessage(data.message);
+                        setSnackbarSeverity("error");
+                        setShowSnackbar(true);
+                    }
+                    else{
+                        setCityName(data.city.name);
+                        setLoading(false);
+                        setSnackbarMessage('Data successfully fetched!');
+                        setSnackbarSeverity("success");
+                        setShowSnackbar(true);
+                        setChartData([]);
+                        groupResultsByDay(data.list);
+                    }
+                })
+                .catch((error) => {
+                    setSnackbarMessage(error);
                     setSnackbarSeverity("error");
-                    setShowSnackbar(true);
-                }
-                else{
-                    setCityName(data.city.name);
-                    setLoading(false);
-                    setSnackbarMessage('Data successfully fetched!');
-                    setSnackbarSeverity("success");
-                    setShowSnackbar(true);
                     setChartData([]);
-                    groupResultsByDay(data.list);
-                }
-            })
-            .catch((error) => {
-                setSnackbarMessage(error);
-                setSnackbarSeverity("error");
-                setChartData([]);
-                setShowSnackbar(true);
-            });
+                    setShowSnackbar(true);
+                });
+        }
+        catch (error){
+            setSnackbarMessage(error.message);
+            setSnackbarSeverity("error");
+            setChartData([]);
+            setShowSnackbar(true);
+        }
+
     }
     useEffect(refresh, [unit])
 
     return (
       <>
+          <div id="increment" onClick={() => {
+              setChartData([]);
+              setSliderIndex(prevState => prevState + 1);
+          }}>+</div>
+
+          <div id="decrement" onClick={() => {
+              setChartData([]);
+              setSliderIndex(prevState => prevState -1)
+          }}>+</div>
           {
               loading ? <Spinner /> : <></>
           }
@@ -92,37 +133,46 @@ function App() {
 
           <Container maxWidth="lg">
               <Box mt={2} mb={2}>
-                  <Grid id="header" container spacing={4}>
-                      <Grid item xs={12}>
-                          <Typography variant="h5">
-                              Displaying results for {cityName}
-                              <IconButton onClick={() => {
-                                  setLoading(true)
-                                  refresh()
-                              }} color="primary" aria-label="refresh">
-                                  <RefreshIcon />
-                              </IconButton>
-                          </Typography>
-                          <FormControl component="fieldset">
-                              <RadioGroup row
-                                          aria-label="unit"
-                                          name="row-radio-buttons-group"
-                                          value={unit}
-                                          onChange={(event) => {
-                                              setLoading(true)
-                                              setUnit(event.target.value)
-                                          }}
-                              >
-                                  <FormControlLabel value="metric" control={<Radio />} label="Celsius" />
-                                  <FormControlLabel value="imperial" control={<Radio />} label="Fahrenheit" />
-                              </RadioGroup>
-                          </FormControl>
-                      </Grid>
-                  </Grid>
+                  {
+                      loading ? <Skeleton /> :
+                          <Grid id="header" container spacing={4}>
+                              <Grid item xs={12}>
+                                  <Typography variant="h5">
+                                      Displaying results for {cityName}
+                                      <IconButton onClick={() => {
+                                          setLoading(true)
+                                          refresh()
+                                      }} color="primary" aria-label="refresh">
+                                          <RefreshIcon />
+                                      </IconButton>
+                                  </Typography>
+                                  <FormControl component="fieldset">
+                                      <RadioGroup row
+                                                  aria-label="unit"
+                                                  name="row-radio-buttons-group"
+                                                  value={unit}
+                                                  onChange={(event) => {
+                                                      setLoading(true);
+                                                      setChartData([]);
+                                                      setUnit(event.target.value);
+                                                  }}
+                                      >
+                                          <FormControlLabel value="metric" control={<Radio />} label="Celsius" />
+                                          <FormControlLabel value="imperial" control={<Radio />} label="Fahrenheit" />
+                                      </RadioGroup>
+                                  </FormControl>
+                              </Grid>
+                          </Grid>
+                  }
               </Box>
 
-              <Grid container spacing={4}>
-                  {results.map((card, index) =>
+              <Grid
+                  container
+                  direction="row"
+                  alignItems="center"
+                  justify="center"
+                  spacing={4}>
+                  {results.slice(3 * sliderIndex,(3 * sliderIndex) + 3).map((card) =>
                       <WeatherCards
                           card={card}
                           loading={loading}
@@ -143,7 +193,7 @@ function App() {
                       />)}
               </Grid>
               {
-                  chartData.length === 0 ? null :
+                  chartData.length === 0 ? <></> :
                       <Box mt={5} pt={3}>
                           <Grid container spacing={4}>
                               <ResponsiveContainer width="100%" height={400}>

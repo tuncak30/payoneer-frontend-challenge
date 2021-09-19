@@ -1,3 +1,19 @@
+#increment{
+    position: fixed;
+    right: 0;
+    width: 20px;
+    height: 100%;
+    background-color: aqua;
+}
+
+#decrement{
+    position: fixed;
+    left: 0;
+    width: 20px;
+    height: 100%;
+    background-color: aqua;
+}
+
 .weather-average{
     justify-content: center;
     display: flex;
@@ -23,7 +39,7 @@
 
 .hourly-temperature-container{
     border-radius: 5px;
-    padding: 5px 0px;
+    padding: 5px 0;
     transition: background-color 200ms ease;
 }
 
