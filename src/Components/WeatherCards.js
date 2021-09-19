@@ -48,8 +48,11 @@ function WeatherCards(props){
                                 {new Date(card.result.dt_txt).toLocaleDateString("en-GB")}
                             </Typography>
                     }
+                    {
+                        loading ? <Skeleton height={40} /> :
+                            <Button onClick={()=> showChart(card)} fullWidth variant="outlined">Select Me!</Button>
+                    }
 
-                    <Button onClick={()=> showChart(card)} fullWidth variant="outlined">Select Me!</Button>
                 </CardContent>
             </Card>
         </Grid>
