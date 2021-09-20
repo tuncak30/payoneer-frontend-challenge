@@ -1,70 +1,28 @@
-# Getting Started with Create React App
+# Payoneer Frontend Challenge
+### To run the app locally with React scripts
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+1. Execute `npm install` in the root folder of the challenge.
+2. Execute `npm start` to host the React application on http://localhost:3000.
 
-## Available Scripts
+### To view the app on the web
 
-In the project directory, you can run:
+1. Simply open http://tuncak30.github.io/payoneer-frontend-challenge to view the project on a browser
 
-### `npm start`
+### Important notes before you start
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. This application uses weather forecast API;
+    - **https://api.openweathermap.org**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Although it has plenty of request limit, I also included another API_KEY in the code, if you reach the limit of one API_KEY you can use the other one.
+- You will see 2 fetch lines, one of them uses Geolocation and the other one is static to Munich,de. If you want to use the geolocation to get a more precise result, you can comment out the one with Munich,de and uncomment the upper 2 lines.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### File Structure
+- **src/Components** -> Sibling components that create the application
+- **src/App.js** -> Parent component
+- **src/Components/WeatherCards.js** -> Main cards that are appended to body after retreiving data
+- **src/Components/InnerTemperatures.js** -> Little boxes inside of cards that holds the hourly weather results for that day
+- **src/Components/Spinner.js** -> Just a simple spinner to show while loading data
+- **src/App.css** -> Main styles of the application
+- **src/index.js** -> Entry point of the application
+- **src/Helpers.js** -> Helper functions for getting the Geolocation and to detect mobile browsers
+- **src/Hooks/useWindowResize.js** -> Custom hook to listen windowresize to change the page size on mobile/desktop (1,3)

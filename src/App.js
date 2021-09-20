@@ -2,6 +2,8 @@ import './App.css';
 import {useState, useEffect} from "react";
 import Spinner from "./Components/Spinner";
 import WeatherCards from "./Components/WeatherCards";
+import {mobileCheck, getPosition} from "./Helpers/Helpers";
+import useWindowResize from "./Hooks/useWindowResize";
 import {
     Alert,
     Snackbar,
@@ -20,11 +22,10 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import {ChevronRight} from "@mui/icons-material";
 
 function App() {
+    //const API_KEY = 'bc2c62b8d886eddba5f797af4475c75d';
     const API_KEY = '404dcc2f1c8087d835711166d14ca85b';
     const [cityName, setCityName] = useState('');
     const [unit, setUnit] = useState('metric');
@@ -35,12 +36,13 @@ function App() {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [chartData, setChartData] = useState([]);
     const [sliderIndex, setSliderIndex] = useState(0);
-    const [pageSize, setPageSize] = useState(/Mobi/i.test(window.navigator.userAgent) ? 1 : 3);
+    const [pageSize, setPageSize] = useState(mobileCheck() ? 1 : 3); // check if the device is mobile or not onload
     const resultsGroupedByDay = [];
+    const [height, width] = useWindowResize();
 
     function groupResultsByDay(results){
         let secondaryIndex = 0;
-        results.map((result) => {
+        results.forEach((result) => {
             if (resultsGroupedByDay.filter(e => e.date.split(" ")[0] === result.dt_txt.split(" ")[0]).length > 0) {
                 resultsGroupedByDay[secondaryIndex - 1].icons.push(result.weather[0].icon);
                 resultsGroupedByDay[secondaryIndex - 1].temperatures.push(result.main.feels_like);
@@ -57,15 +59,14 @@ function App() {
                 secondaryIndex++;
             }
         })
-
         setResults(resultsGroupedByDay);
     }
 
-    function getPosition() {
-        return new Promise((res, rej) => {
-            navigator.geolocation.getCurrentPosition(res, rej);
-        });
-    }
+    useEffect(() => {
+        // just to handle browser resize
+        setSliderIndex(0);
+        setPageSize(mobileCheck() ? 1 : 3);
+    }, [height, width])
 
     const refresh = async () => {
         try{
@@ -113,21 +114,7 @@ function App() {
           {
               loading ? <Spinner /> : <></>
           }
-          {
-              sliderIndex === 0 ? <></> :
-                  <div id="decrement" className="slider-buttons" onClick={() => {
-                      setChartData([]);
-                      setSliderIndex(prevState => prevState -1)
-                  }}><ChevronLeftIcon fontSize="large"/></div>
-          }
 
-          {
-              (sliderIndex + 1) * pageSize >= results.length ? <></> :
-                  <div id="increment" className="slider-buttons"  onClick={() => {
-                      setChartData([]);
-                      setSliderIndex(prevState => prevState + 1);
-                  }}><ChevronRightIcon  fontSize="large"/></div>
-          }
           <CssBaseline />
           <Snackbar
               open={showSnackbar}
@@ -183,8 +170,19 @@ function App() {
                   justify="center"
                   spacing={4}>
 
+                  {
+                      // check if slider is at the beginning position, if so, do not render the previous arrow
+                      sliderIndex === 0 ? <></> :
+                          <div id="decrement" className="slider-buttons" onClick={() => {
+                              setChartData([]);
+                              setSliderIndex(prevState => prevState -1)
+                          }}><ChevronLeftIcon fontSize="large"/></div>
+                  }
+
                   {results.slice(pageSize * sliderIndex,(pageSize * sliderIndex) + pageSize).map((card) =>
+                      // split the results array according to page size and slider index
                       <WeatherCards
+                          key={Math.random()}
                           card={card}
                           loading={loading}
                           unit={unit}
@@ -203,6 +201,15 @@ function App() {
                           }}
                       />)}
 
+
+                  {
+                      // check if slider will have elements on next page, if it doesn't have anything to show, do not render the next arrow
+                      (sliderIndex + 1) * pageSize >= results.length ? <></> :
+                          <div id="increment" className="slider-buttons"  onClick={() => {
+                              setChartData([]);
+                              setSliderIndex(prevState => prevState + 1);
+                          }}><ChevronRightIcon  fontSize="large"/></div>
+                  }
               </Grid>
               {
                   chartData.length === 0 ? <></> :

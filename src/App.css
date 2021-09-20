@@ -1,21 +1,29 @@
-.slider-buttons{
-    position: fixed;
+html,body{
+    overflow-x: hidden;
     height: 100vh;
-    bottom: 0;
-    top: 0;
-    justify-content: center;
-    display: flex;
-    align-items: center;
+}
+
+.slider-buttons{
     cursor: pointer;
-    width: 20px;
+    width: 50px;
     font-size: 50px;
+    position: absolute;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    background-color: #1976d2;
+    color: #fff;
+}
+
+.MuiGrid-root{
+    position: relative;
 }
 
 #increment{
-    right: 0;
+    right: -60px;
 }
 #decrement{
-    left: 0;
+    left: -40px;
 }
 
 .weather-average{
@@ -61,4 +69,27 @@
     justify-content: center;
     left: 0;
     top: 0;
+}
+@media all and (max-width: 1270px) and (min-width: 501px){
+    #increment{
+        right: -45px;
+    }
+    #decrement{
+        left: -10px;
+        z-index: 9;
+    }
+}
+
+@media all and (max-width: 500px){
+    #increment{
+        right: -15px;
+    }
+    #decrement{
+        left: 15px;
+        z-index: 9;
+    }
+
+    h5{
+        font-size: 1.4rem !important;
+    }
 }
