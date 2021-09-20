@@ -24,5 +24,5 @@
 - **src/Components/Spinner.js** -> Just a simple spinner to show while loading data
 - **src/App.css** -> Main styles of the application
 - **src/index.js** -> Entry point of the application
-- **src/Helpers.js** -> Helper functions for getting the Geolocation and to detect mobile browsers
+- **src/Helpers.js** -> Helper functions for getting the Geolocation, date formatting and to detect mobile browsers
 - **src/Hooks/useWindowResize.js** -> Custom hook to listen windowresize to change the page size on mobile/desktop (1,3)

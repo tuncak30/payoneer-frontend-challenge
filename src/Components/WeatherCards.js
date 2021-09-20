@@ -1,5 +1,6 @@
 import {Button, Card, CardContent, Grid, Skeleton, Typography} from "@mui/material";
 import InnerTemperatures from "./InnerTemperatures";
+import {formatDate} from "../Helpers/Helpers";
 
 function WeatherCards(props){
     const {
@@ -45,7 +46,7 @@ function WeatherCards(props){
                     {
                         loading ? <Skeleton height={40} /> :
                             <Typography gutterBottom variant="h5" component="div" marginTop className="text-center">
-                                {new Date(card.result.dt_txt).toLocaleDateString("en-GB")}
+                                {formatDate(card.result.dt_txt)}
                             </Typography>
                     }
                     {

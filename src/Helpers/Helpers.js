@@ -5,10 +5,24 @@ function mobileCheck() {
     return check;
 };
 
+function formatDate(date) {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [day, month, year].join('/');
+}
+
 function getPosition() {
     return new Promise((res, rej) => {
         navigator.geolocation.getCurrentPosition(res, rej);
     });
 }
 
-export {mobileCheck, getPosition};
+export {mobileCheck, formatDate, getPosition};
