@@ -6,7 +6,9 @@ function mobileCheck() {
 };
 
 function formatDate(date) {
-    let d = new Date(date),
+    // just to provide cross-browser date format compatibility
+    let arr = date.split(/[- :]/);
+    let d = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
