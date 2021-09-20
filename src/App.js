@@ -25,8 +25,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function App() {
-    //const API_KEY = 'bc2c62b8d886eddba5f797af4475c75d';
-    const API_KEY = '404dcc2f1c8087d835711166d14ca85b';
+    const API_KEY = 'bc2c62b8d886eddba5f797af4475c75d';
+    //const API_KEY = '404dcc2f1c8087d835711166d14ca85b';
     const [cityName, setCityName] = useState('');
     const [unit, setUnit] = useState('metric');
     const [results, setResults] = useState([]);
